@@ -1,0 +1,17 @@
+#bottomBar {
+    -fx-background-color: lightgrey;
+}
+
+#proteinSequence, #secondaryStructure {
+    -fx-font-family: monospace;
+}
+
+#proteinSequence .scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
+#secondaryStructure .scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}

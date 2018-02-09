@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0"
+            stylesheets="@pdb_viewer.css" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="views.PdbView">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu text="_File">
+                    <items>
+                        <MenuItem fx:id="open" text="_Open PDB File"/>
+                        <MenuItem fx:id="save" text="_Save PDB File"/>
+                        <MenuItem fx:id="reloadPdbTable" mnemonicParsing="false" text="Reload PDB Table"/>
+                        <MenuItem fx:id="close" text="_Close"/>
+                    </items>
+                </Menu>
+                <Menu text="_Edit">
+                    <items>
+                        <RadioMenuItem fx:id="colorCPK" mnemonicParsing="false" text="CPK colors">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="colorToggleGroup"/>
+                            </toggleGroup>
+                        </RadioMenuItem>
+                        <RadioMenuItem fx:id="colorStructure" mnemonicParsing="false" text="Structure colors" toggleGroup="$colorToggleGroup"/>
+                        <RadioMenuItem fx:id="colorShapely" mnemonicParsing="false" text="Shapely colors" toggleGroup="$colorToggleGroup"/>
+                        <RadioMenuItem fx:id="colorSequence" mnemonicParsing="false" text="Sequence colors" toggleGroup="$colorToggleGroup"/>
+                        <RadioMenuItem fx:id="colorTemperature" mnemonicParsing="false" selected="true" text="Temperature colors"
+                                       toggleGroup="$colorToggleGroup"/>
+                    </items>
+                </Menu>
+                <Menu text="_View">
+                    <items>
+                        <RadioMenuItem fx:id="ballAndStickStyle" mnemonicParsing="false" text="Ball-and-Stick style">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="styleToggleGroup"/>
+                            </toggleGroup>
+                        </RadioMenuItem>
+                        <RadioMenuItem fx:id="spaceFillingStyle" mnemonicParsing="false" text="Space-Filling style" toggleGroup="$styleToggleGroup"/>
+                        <RadioMenuItem fx:id="backboneStyle" mnemonicParsing="false" text="Backbone style" toggleGroup="$styleToggleGroup"/>
+                        <RadioMenuItem fx:id="ribbonStyle" mnemonicParsing="false" text="Ribbon style" toggleGroup="$styleToggleGroup"/>
+                        <RadioMenuItem fx:id="cartoonStyle" mnemonicParsing="false" selected="true" text="Cartoon style" toggleGroup="$styleToggleGroup"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <bottom>
+        <BorderPane BorderPane.alignment="CENTER">
+            <right>
+                <HBox fx:id="countsHBox" alignment="CENTER_RIGHT" spacing="15.0" BorderPane.alignment="CENTER_RIGHT">
+                    <children>
+                        <Label alignment="CENTER_RIGHT" text="Atoms">
+                            <graphic>
+                                <Text fx:id="atomsCount" strokeType="OUTSIDE" strokeWidth="0.0" text="0"/>
+                            </graphic>
+                        </Label>
+                        <Label alignment="CENTER_RIGHT" text="Bonds">
+                            <graphic>
+                                <Text fx:id="bondsCount" strokeType="OUTSIDE" strokeWidth="0.0" text="0"/>
+                            </graphic>
+                        </Label>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </BorderPane.margin>
+                </HBox>
+            </right>
+            <center>
+                <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                    <children>
+                        <Text fx:id="proteinDescription" strokeType="OUTSIDE" strokeWidth="0.0">
+                            <HBox.margin>
+                                <Insets/>
+                            </HBox.margin>
+                        </Text>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </BorderPane.margin>
+                </HBox>
+            </center>
+            <left>
+                <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </BorderPane.margin>
+                    <children>
+                        <Text fx:id="pdbId" strokeType="OUTSIDE" strokeWidth="0.0"/>
+                    </children>
+                </HBox>
+            </left>
+        </BorderPane>
+    </bottom>
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab closable="false" text="Protein list">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <VBox fx:id="proteinListVBox" disable="true">
+                                            <children>
+                                                <ToolBar>
+                                                    <items>
+                                                        <HBox maxWidth="1.7976931348623157E308" visible="false"/>
+                                                        <TextField fx:id="idFilter" prefWidth="100.0" promptText="PDB ID filter..."/>
+                                                        <TextField fx:id="classificationFilter" prefWidth="250.0" promptText="Classification filter..."/>
+                                                        <TextField fx:id="titleFilter" prefWidth="300.0" promptText="Title filter..."/>
+                                                    </items>
+                                                </ToolBar>
+                                                <TableView fx:id="proteinTable" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="proteinId" editable="false" maxWidth="-1.0" minWidth="60.0" prefWidth="-1.0"
+                                                                     resizable="false" text="PDB ID"/>
+                                                        <TableColumn fx:id="proteinClassification" editable="false" maxWidth="-1.0" minWidth="250.0"
+                                                                     prefWidth="-1.0" resizable="false" text="Classification"/>
+                                                        <TableColumn fx:id="proteinTitle" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0"
+                                                                     prefWidth="200.0" text="Title"/>
+                                                    </columns>
+                                                    <columnResizePolicy>
+                                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                                                    </columnResizePolicy>
+                                                </TableView>
+                                            </children>
+                                        </VBox>
+                                        <ProgressIndicator fx:id="proteinListProgressIndicator" maxHeight="50.0" maxWidth="50.0" visible="false"/>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="viewTab" closable="false" text="Protein view">
+                    <content>
+                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
+                            <children>
+                                <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <VBox fx:id="proteinViewVBox" disable="true">
+                                            <children>
+                                                <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                                    <items>
+                                                        <Label contentDisplay="RIGHT" text="Color mode">
+                                                            <graphic>
+                                                                <ChoiceBox fx:id="colorModeChoiceBox" prefWidth="150.0"/>
+                                                            </graphic>
+                                                        </Label>
+                                                        <Label contentDisplay="RIGHT" text="Style">
+                                                            <graphic>
+                                                                <ChoiceBox fx:id="styleChoiceBox" prefWidth="150.0"/>
+                                                            </graphic>
+                                                        </Label>
+                                                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Background">
+                                                            <graphic>
+                                                                <ColorPicker fx:id="backgroundColorPicker" promptText="Test rwesr">
+                                                                    <value>
+                                                                        <Color blue="0.2" green="0.2" red="0.2"/>
+                                                                    </value>
+                                                                </ColorPicker>
+                                                            </graphic>
+                                                        </Label>
+                                                    </items>
+                                                </ToolBar>
+                                                <GridPane>
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES"/>
+                                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/>
+                                                    </columnConstraints>
+                                                    <rowConstraints>
+                                                        <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
+                                                        <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
+                                                    </rowConstraints>
+                                                    <children>
+                                                        <Label graphicTextGap="18.0" prefWidth="120.0" text="Protein Sequence"/>
+                                                        <TextArea fx:id="proteinSequence" editable="false" maxWidth="1.7976931348623157E308" prefHeight="10.0"
+                                                                  style="overflow:scroll" GridPane.columnIndex="1"/>
+                                                        <Label contentDisplay="RIGHT" text="Secondary Structure" GridPane.rowIndex="1"/>
+                                                        <TextArea fx:id="secondaryStructure" editable="false" maxWidth="1.7976931348623157E308"
+                                                                  prefHeight="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                                    </children>
+                                                    <padding>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                    </padding>
+                                                </GridPane>
+                                                <Separator prefWidth="200.0"/>
+                                                <StackPane fx:id="proteinViewStackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                                           VBox.vgrow="ALWAYS">
+                                                    <children>
+                                                        <Pane fx:id="bottomPane" prefHeight="200.0" prefWidth="200.0">
+                                                            <cursor>
+                                                                <Cursor fx:constant="OPEN_HAND"/>
+                                                            </cursor>
+                                                        </Pane>
+                                                        <Pane fx:id="topPane" mouseTransparent="true" prefHeight="200.0" prefWidth="200.0"/>
+                                                    </children>
+                                                </StackPane>
+                                            </children>
+                                        </VBox>
+                                        <ProgressIndicator fx:id="proteinViewProgressIndicator" maxHeight="50.0" maxWidth="50.0" visible="false"/>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab closable="false" text="Statistics">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0">
+                            <children>
+                                <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <ScrollPane fx:id="statisticsScrollPane" disable="true" fitToHeight="true" fitToWidth="true"
+                                                    maxHeight="1.7976931348623157E308" pannable="true" prefHeight="400.0">
+                                            <content>
+                                                <FlowPane alignment="TOP_CENTER">
+                                                    <children>
+                                                        <PieChart fx:id="aminoAcidsChart" animated="false" legendVisible="false" title="Amino acids"/>
+                                                        <PieChart fx:id="atomsChart" animated="false" legendVisible="false" title="Atoms"/>
+                                                        <PieChart fx:id="secondaryStructureChart" animated="false" legendVisible="false"
+                                                                  title="Secondary Structure"/>
+                                                        <PieChart fx:id="sequencesChart" animated="false" legendVisible="false" title="Sequences"/>
+                                                    </children>
+                                                </FlowPane>
+                                            </content>
+                                        </ScrollPane>
+                                        <ProgressIndicator fx:id="statisticsProgressIndicator" maxHeight="50.0" maxWidth="50.0" visible="false"/>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>
